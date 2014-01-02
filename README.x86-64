@@ -1,0 +1,13 @@
+This library has been modified to compile natively on x86-64.
+
+An attempt has been made to adapt the assembly code, but due to unsolved issues with
+the fact that shared libraries on x86-64 have to be compiled with PIC, this approach is
+not finished.
+
+This code therefore only uses the portable C implementation, which is certainly slower than
+the assembly SSE2 that could ideally be used.
+
+It could be said that we trade performance against the possibility to compile on x86-64.
+
+feb, 2012
+Matthias P. Braendli, HB9EGM

@@ -214,7 +214,6 @@ int init_viterbi615_sse2(void *p,int starting_state);
 int chainback_viterbi615_sse2(void *p,unsigned char *data,unsigned int nbits,unsigned int endstate);
 void delete_viterbi615_sse2(void *p);
 int update_viterbi615_blk_sse2(void *p,unsigned char *syms,int nbits);
-
 #endif
 
 void *create_viterbi615_port(int len);
@@ -262,9 +261,9 @@ extern enum cpu_mode {UNKNOWN=0,PORT,MMX,SSE,SSE2,ALTIVEC} Cpu_mode;
 void find_cpu_mode(void); /* Call this once at startup to set Cpu_mode */
 
 /* Determine parity of argument: 1 = odd, 0 = even */
-#ifdef __i386__
+#if defined(__i386__) || defined(__x86_64__) 
 static inline int parityb(unsigned char x){
-  __asm__ __volatile__ ("test %1,%1;setpo %0" : "=g"(x) : "r" (x));
+  __asm__ __volatile__ ("test %1,%1;setpo %0" : "=q"(x) : "q" (x));
   return x;
 }
 #else
@@ -317,6 +316,12 @@ void freedp_sse2(void *dp);
 long dotprod_sse2(void *dp,signed short a[]);
 #endif
 
+#ifdef __x86_64__
+void *initdp_sse2(signed short coeffs[],int len);
+void freedp_sse2(void *dp);
+long dotprod_sse2(void *dp,signed short a[]);
+#endif
+
 #ifdef __VEC__
 void *initdp_av(signed short coeffs[],int len);
 void freedp_av(void *dp);
@@ -330,6 +335,9 @@ unsigned long long sumsq_port(signed short *in,int cnt);
 #ifdef __i386__
 unsigned long long sumsq_mmx(signed short *in,int cnt);
 unsigned long long sumsq_sse(signed short *in,int cnt);
+unsigned long long sumsq_sse2(signed short *in,int cnt);
+#endif
+#ifdef __x86_64__
 unsigned long long sumsq_sse2(signed short *in,int cnt);
 #endif
 #ifdef __VEC__

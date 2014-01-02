@@ -41,6 +41,11 @@ void *initdp(signed short coeffs[],int len){
     return initdp_sse2(coeffs,len);
 #endif
 
+#ifdef __x86_64__
+  case SSE2:
+    return initdp_port(coeffs,len);
+#endif
+
 #ifdef __VEC__
   case ALTIVEC:
     return initdp_av(coeffs,len);
@@ -61,6 +66,12 @@ void freedp(void *p){
   case SSE2:
     return freedp_sse2(p);
 #endif
+
+#ifdef __x86_64__
+  case SSE2:
+    return freedp_port(p);
+#endif
+
 #ifdef __VEC__
   case ALTIVEC:
     return freedp_av(p);
@@ -82,6 +93,11 @@ long dotprod(void *p,signed short a[]){
     return dotprod_mmx(p,a);
   case SSE2:
     return dotprod_sse2(p,a);
+#endif
+
+#ifdef __x86_64__
+  case SSE2:
+    return dotprod_port(p,a);
 #endif
 
 #ifdef __VEC__

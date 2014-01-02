@@ -34,6 +34,8 @@ void encode_rs_8(data_t *data, data_t *parity,int pad){
     } else { /* No SIMD at all */
       cpu_mode = PORT;
     }
+#elif __x86_64__
+    cpu_mode = SSE2;
 #elif __VEC__
     /* Ask the OS if we have Altivec support */
     int selectors[2] = { CTL_HW, HW_VECTORUNIT };
@@ -54,11 +56,17 @@ void encode_rs_8(data_t *data, data_t *parity,int pad){
     encode_rs_8_av(data,parity,pad);
     return;
 #endif
+
 #if __i386__
   case MMX:
   case SSE:
   case SSE2:
 #endif
+
+#ifdef __x86_64__
+  case SSE2:
+#endif
+
   default:
     encode_rs_8_c(data,parity,pad);
     return;

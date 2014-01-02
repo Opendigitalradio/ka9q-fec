@@ -15,6 +15,10 @@ unsigned long long sumsq_sse(signed short *,int);
 unsigned long long sumsq_sse2(signed short *,int);
 #endif
 
+#ifdef __x86_64__
+unsigned long long sumsq_sse2(signed short *,int);
+#endif
+
 #ifdef __VEC__
 unsigned long long sumsq_av(signed short *,int);
 #endif
@@ -30,6 +34,12 @@ unsigned long long sumsq(signed short *in,int cnt){
     return sumsq_mmx(in,cnt);
   case SSE2:
     return sumsq_sse2(in,cnt);
+#endif
+
+#ifdef __x86_64__
+  case SSE2:
+    return sumsq_port(in,cnt);
+    //return sumsq_sse2(in,cnt);
 #endif
 
 #ifdef __VEC__

@@ -26,6 +26,10 @@ void *create_viterbi29(int len){
   case SSE2:
     return create_viterbi29_sse2(len);
 #endif
+#ifdef __x86_64__
+  case SSE2:
+    return create_viterbi29_port(len);
+#endif
   }
 }
 
@@ -51,6 +55,11 @@ void set_viterbi29_polynomial(int polys[2]){
     set_viterbi29_polynomial_sse2(polys);
     break;
 #endif
+#ifdef __x86_64__
+  case SSE2:
+    set_viterbi29_polynomial_port(polys);
+    break;
+#endif
   }
 }
 
@@ -71,6 +80,10 @@ int init_viterbi29(void *p,int starting_state){
       return init_viterbi29_sse(p,starting_state);
     case SSE2:
       return init_viterbi29_sse2(p,starting_state);
+#endif
+#ifdef __x86_64__
+    case SSE2:
+      return init_viterbi29_port(p,starting_state);
 #endif
     }
 }
@@ -98,6 +111,10 @@ int chainback_viterbi29(
     case SSE2:
       return chainback_viterbi29_sse2(p,data,nbits,endstate);
 #endif
+#ifdef __x86_64__
+    case SSE2:
+      return chainback_viterbi29_port(p,data,nbits,endstate);
+#endif
     }
 }
 
@@ -124,6 +141,11 @@ void delete_viterbi29(void *p){
       delete_viterbi29_sse2(p);
       break;
 #endif
+#ifdef __x86_64__
+    case SSE2:
+      delete_viterbi29_port(p);
+      break;
+#endif
     }
 }
 
@@ -147,6 +169,10 @@ int update_viterbi29_blk(void *p,unsigned char syms[],int nbits){
       return update_viterbi29_blk_sse(p,syms,nbits);
     case SSE2:
       return update_viterbi29_blk_sse2(p,syms,nbits);
+#endif
+#ifdef __x86_64__
+    case SSE2:
+      return update_viterbi29_blk_port(p,syms,nbits);
 #endif
     }
 }

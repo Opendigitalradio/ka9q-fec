@@ -36,8 +36,15 @@ fi
 
 AC_CANONICAL_SYSTEM
 case $target_cpu in
+x86_64)
+	ARCH_OPTION="-msse2"
+	MLIBS="dotprod_port.o \
+	peakval_port.o \
+	sumsq.o sumsq_port.o \
+	cpu_mode_x86_64.o"
+	;;
 i386|i486|i586|i686)
-	ARCH_OPTION="-march=$target_cpu"
+    ARCH_OPTION="-march=$target_cpu"
 	MLIBS="viterbi27_mmx.o mmxbfly27.o viterbi27_sse.o ssebfly27.o viterbi27_sse2.o sse2bfly27.o \
 	viterbi29_mmx.o mmxbfly29.o viterbi29_sse.o ssebfly29.o viterbi29_sse2.o sse2bfly29.o \
 	viterbi39_sse2.o viterbi39_sse.o viterbi39_mmx.o \

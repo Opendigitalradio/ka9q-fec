@@ -12,6 +12,10 @@ int peakval_sse(signed short *b,int cnt);
 int peakval_sse2(signed short *b,int cnt);
 #endif
 
+#ifdef __x86_64__
+int peakval_sse2(signed short *b,int cnt);
+#endif
+
 #ifdef __VEC__
 int peakval_av(signed short *b,int cnt);
 #endif
@@ -31,6 +35,13 @@ int peakval(signed short *b,int cnt){
   case SSE2:
     return peakval_sse2(b,cnt);
 #endif
+
+#ifdef __x86_64__
+  case SSE2:
+    return peakval_port(b,cnt);
+    //return peakval_sse2(b,cnt);
+#endif
+
 #ifdef __VEC__
   case ALTIVEC:
     return peakval_av(b,cnt);
