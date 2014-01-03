@@ -2,6 +2,7 @@ INSTALLATION INSTRUCTIONS
 
 To build and install the libfec libraries, simply say
 
+./bootstrap
 ./configure
 make
 make test (optional)
@@ -35,5 +36,6 @@ broken.
 28 Mar 2004
 Phil Karn, karn@ka9q.net
 
-
+3 Jan 2014
+Matthias P. Braendli, matthias@mpb.li
 
