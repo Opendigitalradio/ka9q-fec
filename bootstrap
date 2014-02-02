@@ -1,5 +1,6 @@
 #!/bin/bash
 
 aclocal && \
+autoheader && \
 autoconf
 
