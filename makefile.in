@@ -101,7 +101,7 @@ libfec.dylib: $(LIBS)
 
 # for Linux et al
 libfec.so: $(LIBS)
-	gcc -fPIC -shared -Xlinker -soname=$@ -o $@ -Wl,-whole-archive $^ -Wl,-no-whole-archive -lc
+	gcc -fPIC -shared -Xlinker -soname=$@ -o $@ -Wl,-whole-archive $^ -Wl,-no-whole-archive -lc -lm
 
 dotprod.o: dotprod.c fec.h
 
