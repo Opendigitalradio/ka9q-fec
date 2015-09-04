@@ -1,0 +1,13 @@
+prefix=@LIBFEC_PC_PREFIX@
+exec_prefix=@LIBFEC_PC_EXEC_PREFIX@
+libdir=@LIBFEC_PC_LIBDIR@
+includedir=@LIBFEC_PC_INCLUDEDIR@
+
+Name: FEC library
+Description: A fork of KA9Q's FEC library
+Version: @LIBFEC_PC_VERSION@
+URL: http://opendigitalradio.org
+Cflags: -I${includedir}/ @LIBFEC_PC_CFLAGS@
+Libs: -L${libdir}/ @LIBFEC_PC_LIBS@
+Libs.private: @LIBFEC_PC_PRIV_LIBS@
+
