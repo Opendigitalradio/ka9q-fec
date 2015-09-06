@@ -180,7 +180,7 @@ set(LIBFEC_PC_EXEC_PREFIX \${prefix})
 set(LIBFEC_PC_LIBDIR \${exec_prefix}/${LIB_INSTALL_DIR})
 set(LIBFEC_PC_INCLUDEDIR \${prefix}/include)
 set(LIBFEC_PC_VERSION ${VERSION})
-set(LIBFEC_PC_LIBS "-fec")
+set(LIBFEC_PC_LIBS "-lfec")
 
 # Use space-delimiter in the .pc file, rather than CMake's semicolon separator
 string(REPLACE ";" " " LIBFEC_PC_CFLAGS "${LIBFEC_PC_CFLAGS}")
