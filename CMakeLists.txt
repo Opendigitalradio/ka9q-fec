@@ -2,7 +2,7 @@
 # Project setup
 ########################################################################
 cmake_minimum_required(VERSION 2.8)
-project(libfec C)
+project(libfec ASM C)
 
 # Select the release build type by default to get optimization flags
 if(NOT CMAKE_BUILD_TYPE)
@@ -62,12 +62,25 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANGCC)
     add_definitions(-Wno-unused)
 
     if(TARGET_ARCH MATCHES "x64")
+         add_definitions(-fPIC)
+         add_definitions(-msse2)
+    elseif(TARGET_ARCH MATCHES "x86")
+         add_definitions(-mmmx)
+         add_definitions(-msse)
          add_definitions(-msse2)
     elseif(TARGET_ARCH MATCHES "ppc|ppc64")
-         add_definitions(-fno-common -faltivec)
+         add_definitions(-fno-common)
+         add_definitions(-faltivec)
     endif()
 
 endif()
+
+########################################################################
+# Find build dependencies
+########################################################################
+
+# libm
+find_library(M_LIB m REQUIRED)
 
 
 ########################################################################
@@ -94,6 +107,7 @@ check_function_exists("memmove"          HAVE_MEMMOVE)
 ########################################################################
 # Setup apps
 ########################################################################
+
 if(TARGET_ARCH MATCHES "x64")
     list(APPEND libfec_sources
         dotprod_port.c
@@ -101,22 +115,19 @@ if(TARGET_ARCH MATCHES "x64")
         sumsq.c
         sumsq_port.c
         cpu_mode_x86_64.c
+	##asm
+	#sse2bfly27-64.s
+	#sse2bfly29-64.s
         )
 
 elseif(TARGET_ARCH MATCHES "x86")
     list(APPEND libfec_sources
         viterbi27_mmx.c
-        mmxbfly27.c
         viterbi27_sse.c
-        ssebfly27.c
         viterbi27_sse2.c
-        sse2bfly27.c
         viterbi29_mmx.c
-        mmxbfly29.c
         viterbi29_sse.c
-        ssebfly29.c
         viterbi29_sse2.c
-        sse2bfly29.c
         viterbi39_sse2.c
         viterbi39_sse.c
         viterbi39_mmx.c
@@ -124,23 +135,33 @@ elseif(TARGET_ARCH MATCHES "x86")
         viterbi615_sse.c
         viterbi615_sse2.c
         dotprod_mmx.c
-        dotprod_mmx_assist.c
         dotprod_sse2.c
-        dotprod_sse2_assist.c
         peakval_mmx.c
-        peakval_mmx_assist.c
         peakval_sse.c
-        peakval_sse_assist.c
         peakval_sse2.c
-        peakval_sse2_assist.c
         sumsq.c
         sumsq_port.c
         sumsq_sse2.c
-        sumsq_sse2_assist.c
         sumsq_mmx.c
-        sumsq_mmx_assist.c
-        cpu_features.c
         cpu_mode_x86.c
+	#asm
+	cpu_features.s
+	dotprod_mmx_assist.s
+	dotprod_sse2_assist.s
+	mmxbfly27.s
+	mmxbfly29.s
+	peak_mmx_assist.s
+	peak_sse2_assist.s
+	peak_sse_assist.s
+	peakval_mmx_assist.s
+	peakval_sse2_assist.s
+	peakval_sse_assist.s
+	sse2bfly27.s
+	sse2bfly29.s
+	ssebfly27.s
+	ssebfly29.s
+	sumsq_mmx_assist.s
+	sumsq_sse2_assist.s
         )
 
 elseif(TARGET_ARCH MATCHES "ppc|ppc64")
@@ -162,6 +183,37 @@ else()
 
 endif()
 
+
+list(APPEND libfec_sources
+    fec.c
+    sim.c
+    viterbi27.c
+    viterbi27_port.c
+    viterbi29.c
+    viterbi29_port.c
+    viterbi39.c
+    viterbi39_port.c
+    viterbi615.c
+    viterbi615_port.c
+    encode_rs_char.c
+    encode_rs_int.c
+    encode_rs_8.c
+    decode_rs_char.c
+    decode_rs_int.c
+    decode_rs_8.c
+    init_rs_char.c
+    init_rs_int.c
+    encode_rs_ccsds.c
+    decode_rs_ccsds.c
+    dotprod.c
+    dotprod_port.c
+    peakval.c
+    peakval_port.c
+    sumsq.c
+    sumsq_port.c
+    ccsds_tab.c
+    ccsds_tal.c
+)
 
 
 ################################################################################
@@ -207,12 +259,32 @@ install(
 ########################################################################
 # Setup libraries
 ########################################################################
+
+# generate ccsds_tab.c
+add_executable(gen_ccsds gen_ccsds.c init_rs_char.c)
+add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/ccsds_tab.c
+    COMMAND  ${CMAKE_BINARY_DIR}/gen_ccsds > ccsds_tab.c
+    DEPENDS  gen_ccsds
+)
+
+# generate ccsds_tal.c
+add_executable(gen_ccsds_tal gen_ccsds_tal.c)
+add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/ccsds_tal.c
+    COMMAND  ${CMAKE_BINARY_DIR}/gen_ccsds_tal > ccsds_tal.c
+    DEPENDS  gen_ccsds_tal
+)
+
+# libfec
 add_library(libfec_shared SHARED ${libfec_sources})
 set_target_properties(libfec_shared PROPERTIES OUTPUT_NAME fec)
 set_target_properties(libfec_shared PROPERTIES SOVERSION ${VERSION_INFO_MAJOR})
+target_link_libraries(libfec_shared ${M_LIB})
+
 
 install(TARGETS libfec_shared
-    DESTINATION lib)
+    DESTINATION ${LIB_INSTALL_DIR})
 install(FILES "${PROJECT_SOURCE_DIR}/fec.h"
     DESTINATION include)
 
@@ -235,6 +307,7 @@ add_custom_target(uninstall
 message(STATUS "")
 message(STATUS "##########################################################")
 message(STATUS "## Building for version: ${VERSION}")
+message(STATUS "## Target Architecture:  ${TARGET_ARCH}")
 message(STATUS "## Using install prefix: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "##########################################################")
 message(STATUS "")
