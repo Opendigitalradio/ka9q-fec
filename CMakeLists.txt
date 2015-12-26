@@ -146,9 +146,9 @@ elseif(TARGET_ARCH MATCHES "x86")
         viterbi615_sse2.c
         dotprod_mmx.c
         dotprod_sse2.c
-        peakval_mmx.c
-        peakval_sse.c
-        peakval_sse2.c
+        #peakval_mmx.c
+        #peakval_sse.c
+        #peakval_sse2.c
         sumsq.c
         sumsq_port.c
         sumsq_sse2.c
