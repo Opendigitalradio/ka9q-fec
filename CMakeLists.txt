@@ -4,6 +4,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(libfec ASM C)
 
+option(BUILD_32BIT_ON_64BIT "Build a 32-bit library on a 64-bit system" OFF)
+
 # Select the release build type by default to get optimization flags
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
@@ -39,6 +41,14 @@ endif()
 ########################################################################
 # Compiler specific setup
 ########################################################################
+if(BUILD_32BIT_ON_64BIT)
+    set(CMAKE_SYSTEM_PROCESSOR "i386")
+    set(CMAKE_SIZEOF_VOID_P 4)
+    set(CMAKE_C_FLAGS -m32)
+    set(CMAKE_CXX_FLAGS -m32)
+    add_definitions(-m32)
+endif()
+
 if((CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i686|x86|AMD64") AND (CMAKE_SIZEOF_VOID_P EQUAL 4))
     set(TARGET_ARCH "x86")
 elseif((CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64") AND (CMAKE_SIZEOF_VOID_P EQUAL 8))
