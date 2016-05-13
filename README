@@ -7,6 +7,8 @@ the file "lesser.txt" in this package for license details.
 It has been modified by Matthias P. Braendli, HB9EGM, so that it
 compiles for x86_64 and for arm.
 
+For installation instructions, please see INSTALL
+
 INTRODUCTION
 
 This package provides a set of functions that implement several
